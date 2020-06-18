@@ -45,5 +45,6 @@ story_list = [scrape_page_urls(page) for page in tqdm(range(1, 16), desc="1st lo
 
 df = pd.DataFrame({'text': list_flatten(story_list)})
 df.text = df.text.str.replace("<br/>", "\n\n")
+df.text = "<|startoftext|> " + df.text + " <|endoftext|>
 df.to_csv("../data/external/scraped_stories.csv", index=False)
 print("Finished")
