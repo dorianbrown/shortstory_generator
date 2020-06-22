@@ -22,17 +22,22 @@ def main(data_dir):
         source.extend(s)
 
     source = [s.strip().replace("[ WP ]", "[WP]") for s in source]
+    # 
+    source = [re.sub(r"^\[\s[A-Z]{2}\s\]", "[WP]", s) for s in source]
     # Removing trailing edits from story
     target = [re.sub(r"(?i)edit\s?:[\W\w]+$", "", t) for t in target]
+    # Trim string, add start/end tokens
     target = ["<|startoftext|> " + t.strip() + " <|endoftext|>" for t in target]
 
     output = [s + " " + t for s, t in zip(source, target)]
 
     lengths = [len(o.split(" ")) for o in output]
-    keep_ind = np.where(np.array(lengths) < 1000)[0]
+    keep_ind = np.where(np.array(lengths) < 400)[0]
     output = [output[i] for i in keep_ind]
 
-    with open("data/processed/gpt2_input_1.txt", 'w+') as f:
+    filename = "gpt2_input_lt400"
+
+    with open(f"data/processed/{filename}_1.txt", 'w+') as f:
         for line in output[:100_000]:
             f.write(line + "\n")
 
