@@ -1,0 +1,14 @@
+@font-face {
+  font-family: inconsolata;
+  src: url(Inconsolata-Regular.ttf)
+}
+
+#text {
+  background-color: gray;
+  color: white;
+  padding: 20px 30px 5px 30px;
+  margin: 10px 0px;
+  border-radius: 10px;
+  font-family: inconsolata;
+  font-size: larger;
+}
