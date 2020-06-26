@@ -1,3 +1,5 @@
+<link rel="stylesheet" type="text/css" href="gpt2.css">
+
 # Test Header
 
 Some text here to see if this is working.
