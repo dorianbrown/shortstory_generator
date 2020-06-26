@@ -2,6 +2,16 @@
 
 import numpy as np
 import re
+from tqdm import tqdm
+
+
+def cleanup_text(text):
+    # Do all formatting rules here
+    text = re.sub(r"``\s", r'"', text)
+    text = re.sub(r"\s''", r'"', text)
+    text = re.sub(r"\s([\.\,\!\?])", r"\1", text)
+    text = re.sub(r"\s(\w*\'\w)", r"\1", text)
+    return text
 
 
 def load_dataset(dir, prefix):
@@ -24,15 +34,17 @@ def main(data_dir):
     source = [s.strip().replace("[ WP ]", "[WP]") for s in source]
     # 
     source = [re.sub(r"^\[\s[A-Z]{2}\s\]", "[WP]", s) for s in source]
-    # Removing trailing edits from story
-    target = [re.sub(r"(?i)edit\s?:[\W\w]+$", "", t) for t in target]
-    # Trim string, add start/end tokens
-    target = ["<|startoftext|> " + t.strip() + " <|endoftext|>" for t in target]
+    # Cleanup formatting text
+    for i in tqdm(range(len(target))):
+        target[i] = re.sub(r"(?i)edit\s?:[\W\w]+$", "", target[i])
+        target[i] = cleanup_text(target[i])
+        target[i] = "<|startoftext|> " + target[i].strip() + " <|endoftext|>"
 
     output = [s + " " + t for s, t in zip(source, target)]
 
     lengths = [len(o.split(" ")) for o in output]
-    keep_ind = np.where(np.array(lengths) < 400)[0]
+    keep_ind = np.where(np.array(lengths) < 500)[0]
+    print(f"Generating training data with {len(keep_ind)} data points")
     output = [output[i] for i in keep_ind]
 
     filename = "gpt2_input_lt400"
@@ -41,11 +53,11 @@ def main(data_dir):
         for line in output[:100_000]:
             f.write(line + "\n")
 
-    with open("data/processed/gpt2_input_2.txt", 'w+') as f:
+    with open(f"data/processed/{filename}_2.txt", 'w+') as f:
         for line in output[100_000:200_000]:
             f.write(line + "\n")
 
-    with open("data/processed/gpt2_input_3.txt", 'w+') as f:
+    with open(f"data/processed/{filename}_3.txt", 'w+') as f:
         for line in output[200_000:]:
             f.write(line + "\n")
 
