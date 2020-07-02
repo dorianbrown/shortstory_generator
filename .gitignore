@@ -3,6 +3,7 @@
 checkpoint/*
 data/*
 models/*
+api/checkpoint/run1/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
