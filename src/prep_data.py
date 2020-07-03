@@ -20,6 +20,7 @@ def parse_args():
     parser.add_argument('--chunksize', type=int, default=100_000)
     parser.add_argument('--maxtokens', type=int, default=1_000)
     parser.add_argument('--preview', type=int, default=0)
+    parser.add_argument('--dataset', default='all')
 
     return parser.parse_args()
 
@@ -98,7 +99,10 @@ def prep_csv(prefix):
 
 
 def main():
-    prefixes = ['train', 'test', 'valid']
+    if args.dataset == 'all':
+        prefixes = ['train', 'test', 'valid']
+    else:
+        prefixes = [args.dataset]
 
     for prefix in prefixes:
         print(f"Processing {prefix}")
