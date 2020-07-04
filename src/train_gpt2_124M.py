@@ -3,10 +3,9 @@
 from gpt_2_simple import finetune, start_tf_sess
 from datetime import datetime
 
-ymd = datetime.now().strftime("%Y%m%d")
-train_data = "data/processed/124M_train.npz"
-valid_data = "data/processed/124M_valid.npz"
-run_name = f"124M_newdata_{ymd}"
+train_data = "data/processed/124M_filter500_train.npz"
+valid_data = "data/processed/124M_filter500_valid.npz"
+run_name = f"124M_filter500_adam_lr0001"
 
 sess = start_tf_sess()
 

@@ -2,9 +2,9 @@
 
 from gpt_2_simple import finetune, start_tf_sess
 
-train_data = "data/processed/355M_train.npz"
-valid_data = "data/processed/355M_valid.npz"
-run_name = "355M_newdata_20190701"
+train_data = "data/processed/355M_filter500_train.npz"
+valid_data = "data/processed/355M_filter500_valid.npz"
+run_name = "355M_lt500_adam_lr0001"
 
 sess = start_tf_sess()
 
@@ -12,7 +12,7 @@ finetune(
     sess=sess,
     dataset=train_data,
     model_name="355M",
-    learning_rate=0.00001,
+    learning_rate=0.0001,
     run_name=run_name,
     restore_from="latest",
     save_every=1000,

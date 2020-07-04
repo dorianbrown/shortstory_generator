@@ -19,8 +19,10 @@ def parse_args():
     parser.add_argument('--output', default='data/processed')
     parser.add_argument('--chunksize', type=int, default=100_000)
     parser.add_argument('--maxtokens', type=int, default=1_000)
+    parser.add_argument('--filter', type=int, default=800)
     parser.add_argument('--preview', type=int, default=0)
     parser.add_argument('--dataset', default='all')
+    parser.add_argument('--desc', type=str, default='')
 
     return parser.parse_args()
 
@@ -75,6 +77,9 @@ def prep_csv(prefix):
     print(f"Starting encoding of data for [{args.model}]")
     df.txt = "<|startoftext|> " + df.txt + " <|endoftext|>" + "\n"
 
+    text_length = df.txt.apply(lambda x: len(x.split(" ")))
+    df = df[text_length < args.filter]
+
     def first_1k_tokens(text):
         return " ".join(text.split(" ")[:args.maxtokens])
 
@@ -95,7 +100,11 @@ def prep_csv(prefix):
         print(f"encoding chunk {i}")
         token_chunks.append(np.stack(enc.encode(chunk)))
     print("Starting saving npz")
-    np.savez_compressed(f"{args.output}/{args.model}_{prefix}.npz", *token_chunks)
+    if args.desc:
+        filename = f"{args.output}/{args.model}_{args.desc}_{prefix}.npz"
+    else:
+        filename = f"{args.output}/{args.model}_{prefix}.npz"
+    np.savez_compressed(filename, *token_chunks)
 
 
 def main():
