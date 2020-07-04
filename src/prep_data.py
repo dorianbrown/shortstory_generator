@@ -62,7 +62,7 @@ def prep_csv(prefix):
         [r"\s”", '"'],  # see above
         [r"\s([\.\,\!\?;:])", r"\1"],  # Making punctuation attached to word
         [r"\(.+\)", "\1"],  # Turning "( words )" into "(words)"
-        [r"\sn't", r"n't"],  # First get " n't " part of contraction
+        [r"\s([nN]'[tT])", r"\1"],  # First get " n't " part of contraction
         [r"\s'\s?(\w)", r"'\1"],  # Sticking most contractions back together
         [r"\s’\s?(\w)", r"'\1"],  # Catching ’ apostrophes (not ')
         [r"\s([\*\_]+\s)", r"\1"],  # Correct reddit formatting "*word *" => "*word*"
