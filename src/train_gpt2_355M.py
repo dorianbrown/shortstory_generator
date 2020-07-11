@@ -12,7 +12,7 @@ finetune(
     sess=sess,
     dataset=train_data,
     model_name="355M",
-    learning_rate=0.0001,
+    learning_rate=0.000001,
     run_name=run_name,
     restore_from="latest",
     save_every=1000,

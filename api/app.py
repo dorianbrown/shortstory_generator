@@ -7,9 +7,10 @@ import os
 import gc
 
 app = Starlette(debug=False)
+run_name = "355M_lt500_adam_lr0001"
 
-sess = gpt2.start_tf_sess(threads=1)
-gpt2.load_gpt2(sess)
+sess = gpt2.start_tf_sess(threads=2)
+gpt2.load_gpt2(sess, run_name=run_name)
 
 # Needed to avoid cross-domain issues
 response_header = {
@@ -33,12 +34,12 @@ async def homepage(request):
                              headers=response_header)
 
     text = gpt2.generate(sess,
+                         run_name=run_name,
                          length=int(params.get('length', 1023)),
-                         temperature=float(params.get('temperature', 0.7)),
-                         top_k=int(params.get('top_k', 0)),
-                         top_p=float(params.get('top_p', 0)),
+                         temperature=float(params.get('temperature', 1)),
+                         top_p=float(params.get('top_p', 0.9)),
                          prefix=params.get('prefix', '')[:500],
-                         truncate=params.get('truncate', None),
+                         truncate=params.get('truncate', "<|endoftext|>"),
                          include_prefix=str(params.get(
                              'include_prefix', True)).lower() == 'true',
                          return_as_list=True
@@ -49,8 +50,8 @@ async def homepage(request):
         # Reload model to prevent Graph/Session from going OOM
         tf.reset_default_graph()
         sess.close()
-        sess = gpt2.start_tf_sess(threads=1)
-        gpt2.load_gpt2(sess)
+        sess = gpt2.start_tf_sess(threads=2)
+        gpt2.load_gpt2(sess, run_name=run_name)
         generate_count = 0
 
     gc.collect()

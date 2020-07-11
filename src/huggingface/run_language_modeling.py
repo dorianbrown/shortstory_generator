@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 # Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
 # Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
@@ -25,6 +26,7 @@ import math
 import os
 from dataclasses import dataclass, field
 from typing import Optional
+import torch
 
 from transformers import (
     CONFIG_MAPPING,
@@ -225,6 +227,13 @@ def main():
         tokenizer=tokenizer, mlm=data_args.mlm, mlm_probability=data_args.mlm_probability
     )
 
+    for name, par in model.named_parameters():
+        if name in ['transformer.wte.weight', 'transformer.wpe.weight']:
+            par.requires_grad = False
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+    lr_scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda epoch: 0.95 ** epoch)
+
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
@@ -233,6 +242,7 @@ def main():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         prediction_loss_only=True,
+        optimizers=(optimizer, lr_scheduler)
     )
 
     # Training

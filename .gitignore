@@ -3,10 +3,11 @@
 checkpoint/*
 data/*
 models/*
-api/checkpoint/run1/*
+api/checkpoint/*
 gen/*
 samples/*
 docs/_site/*
+gpt2s_hf/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
